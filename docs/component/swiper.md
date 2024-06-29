@@ -1,8 +1,8 @@
 <frame/>
 
-# Swiper 轮播图 <el-tag text style="vertical-align: middle;margin-left:8px;" effect="plain">0.1.22</el-tag>
+# Swiper 轮播 <el-tag text style="vertical-align: middle;margin-left:8px;" effect="plain">0.1.22</el-tag>
 
-用于创建轮播图，它支持水平和垂直方向的滑动，可以自定义样式和指示器位置。
+用于创建轮播，它支持水平和垂直方向的滑动，可以自定义样式和指示器位置，支持视频和图片资源与自定义轮播内容。
 
 ## 基础用法
 
@@ -242,7 +242,7 @@ const isLoop = ref(false)
 
 ### SwiperList
 
-轮播图项的列表配置，包括 `value` 属性，支持扩展属性。
+轮播图项的列表配置，包括 图片或视频地址`value`、视频封面`poster` 等属性，支持扩展属性。
 
 ### SwiperIndicatorProps
 
@@ -269,6 +269,8 @@ const isLoop = ref(false)
 | name      | 说明         | 参数                                 | 最低版本 |
 | --------- | ------------ | ------------------------------------ | -------- |
 | indicator | 自定义指示器 | `{ current: number, total: number }` | 0.1.22   |
+| default   | 默认插槽，可以使用`wd-swiper-item`或者[swiper-item](https://uniapp.dcloud.net.cn/component/swiper.html#swiper-item)自定义轮播子项 | - | $LOWEST_VERSION$    |
+
 
 ## 外部样式类
 
@@ -276,6 +278,9 @@ const isLoop = ref(false)
 | -------------------- | -------------------- | -------- |
 | customClass          | 外部自定义类名       | 0.1.22   |
 | customIndicatorClass       | 自定义指示器类名     | 0.1.22   |
-| customImageClass     | 自定义图片类名       | 0.1.22   |
-| customPrevImageClass | 自定义上一个图片类名 | 0.1.22   |
-| customNextImageClass | 自定义下一个图片类名 | 0.1.22   |
+| customImageClass     | 自定义图片类名，1.3版本将废弃，请使用`customItemClass`代替 | 0.1.22   |
+| customPrevImageClass | 自定义上一个图片类名，1.3版本将废弃，请使用`customPrevClass`代替 | 0.1.22   |
+| customNextImageClass | 自定义下一个图片类名，1.3版本将废弃，请使用`customNextClass`代替 | 0.1.22   |
+| customItemClass     | 自定义子项类名       | $LOWEST_VERSION$   |
+| customPrevClass | 自定义上一个子项类名 | $LOWEST_VERSION$   |
+| customNextClass | 自定义下一个子项类名 | $LOWEST_VERSION$   |

@@ -2,7 +2,7 @@
   <view :class="`wd-swiper ${customClass}`" :style="customStyle">
     <swiper
       class="wd-swiper__track"
-      :autoplay="autoplay"
+      :autoplay="autoplay && !videoPlaying"
       :current="navCurrent"
       :interval="interval"
       :duration="duration"
@@ -17,14 +17,32 @@
       @change="handleChange"
       @animationfinish="handleAnimationfinish"
     >
-      <swiper-item v-for="(item, index) in list" :key="index" class="wd-swiper__item" @click="handleClick(index)">
-        <image
-          :src="isObj(item) ? item.value : item"
-          :class="`wd-swiper__image ${customImageClass} ${getCustomImageClass(navCurrent, index, list)}`"
-          :style="{ height: addUnit(height) }"
-          :mode="imageMode"
-        />
-      </swiper-item>
+      <slot>
+        <swiper-item v-for="(item, index) in list" :key="index" class="wd-swiper__item" @click="handleClick(index)">
+          <image
+            v-if="isImageUrl(isObj(item) ? item.value : item)"
+            :src="isObj(item) ? item.value : item"
+            :class="`wd-swiper__image ${customImageClass} ${customItemClass} ${getCustomItemClass(navCurrent, index, list)}`"
+            :style="{ height: addUnit(height) }"
+            :mode="imageMode"
+          />
+          <video
+            v-else
+            :id="`video-${index}`"
+            :style="{ height: addUnit(height) }"
+            :src="isObj(item) ? item.value : item"
+            :poster="isObj(item) ? item.poster : ''"
+            :class="`wd-swiper__video ${customItemClass} ${getCustomItemClass(navCurrent, index, list)}`"
+            @play="handleVideoPaly"
+            @pause="handleVideoPause"
+            :enable-progress-gesture="false"
+            loop
+            muted
+            :autoplay="autoplayVideo"
+            objectFit="cover"
+          />
+        </swiper-item>
+      </slot>
     </swiper>
 
     <template v-if="indicator">
@@ -44,16 +62,30 @@
     </template>
   </view>
 </template>
+<script lang="ts">
+export default {
+  name: 'wd-swiper',
+  options: {
+    addGlobalClass: true,
+    virtualHost: true,
+    styleIsolation: 'shared'
+  }
+}
+</script>
 
 <script lang="ts" setup>
-import { computed, watch, ref } from 'vue'
-import { addUnit, isObj } from '../common/util'
+import { computed, watch, ref, getCurrentInstance } from 'vue'
+import { addUnit, isObj, isImageUrl, isVideoUrl } from '../common/util'
 import { swiperProps, type SwiperList } from './types'
 import type { SwiperNavProps } from '../wd-swiper-nav/types'
 
 const props = defineProps(swiperProps)
 const emit = defineEmits(['click', 'change', 'animationfinish', 'update:current'])
 const navCurrent = ref<number>(0) // 当前滑块
+
+const videoPlaying = ref<boolean>(false) // 当前是否在播放视频
+
+const { proxy } = getCurrentInstance() as any
 
 watch(
   () => props.current,
@@ -98,6 +130,16 @@ function goToEnd() {
   navCurrent.value = props.list.length - 1
 }
 
+// 视频播放
+function handleVideoPaly() {
+  props.stopAutoplayWhenVideoPlay && (videoPlaying.value = true)
+}
+
+// 视频暂停
+function handleVideoPause() {
+  videoPlaying.value = false
+}
+
 /**
  * 是否为当前滑块的前一个滑块
  * @param current
@@ -118,25 +160,71 @@ function isNext(current: number, index: number, list: string[] | SwiperList[]) {
   return (current + 1 + list.length) % list.length === index
 }
 
-function getCustomImageClass(current: number, index: number, list: string[] | SwiperList[]) {
-  let customImageClass: string = ''
+function getCustomItemClass(current: number, index: number, list: string[] | SwiperList[]) {
+  let customItemClass: string = ''
   if (isPrev(current, index, list)) {
-    customImageClass = props.customPrevImageClass
+    customItemClass = props.customPrevClass || props.customPrevImageClass
   }
   if (isNext(current, index, list)) {
-    customImageClass = props.customNextImageClass
+    customItemClass = props.customNextClass || props.customNextImageClass
   }
-  return customImageClass
+  return customItemClass
 }
 
 /**
  * 轮播滑块切换时触发
  * @param e
  */
-function handleChange(e: { detail: { current: any; source: string } }) {
+function handleChange(e: { detail: { current: number; source: string } }) {
   const { current, source } = e.detail
+  const previous = navCurrent.value
   navCurrent.value = current
   emit('change', { current, source })
+  handleVideoChange(previous, current)
+}
+
+/**
+ * 处理视频切换
+ */
+function handleVideoChange(previous: number, current: number) {
+  handleStopVideoPaly(previous)
+  handleStartVideoPaly(current)
+}
+
+/**
+ * 开始播放指定视频
+ * @param index
+ */
+function handleStartVideoPaly(index: number) {
+  if (props.autoplayVideo) {
+    const currentItem = props.list[index]
+    if (currentItem) {
+      const url = isObj(currentItem) ? currentItem.url : currentItem
+      if (isVideoUrl(url)) {
+        const video = uni.createVideoContext(`video-${index}`, proxy)
+        video.play()
+      }
+    }
+  }
+}
+
+/**
+ * 停止播放指定视频
+ * @param index
+ */
+function handleStopVideoPaly(index: number) {
+  if (props.stopPreviousVideo) {
+    const previousItem = props.list[index]
+    if (previousItem) {
+      const url = isObj(previousItem) ? previousItem.url : previousItem
+      if (isVideoUrl(url)) {
+        const video = uni.createVideoContext(`video-${index}`, proxy)
+        video.pause()
+      }
+    }
+  } else if (props.stopAutoplayWhenVideoPlay) {
+    handleVideoPause()
+  }
 }
 
 /**

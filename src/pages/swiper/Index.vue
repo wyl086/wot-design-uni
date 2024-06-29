@@ -20,6 +20,17 @@
       ></wd-swiper>
     </demo-block>
 
+    <demo-block title="播放视频">
+      <wd-swiper
+        :list="videoList"
+        autoplay
+        :indicator="{ type: 'fraction' }"
+        indicator-position="bottom-right"
+        @click="handleClick"
+        @change="onChange"
+      ></wd-swiper>
+    </demo-block>
+
     <demo-block title="手动切换">
       <wd-swiper
         :list="swiperList"
@@ -114,6 +125,12 @@ const swiperList = ref([
   'https://unpkg.com/wot-design-uni-assets/panda.jpg',
   'https://img.yzcdn.cn/vant/cat.jpeg',
   'https://unpkg.com/wot-design-uni-assets/meng.jpg'
+])
+
+const videoList = ref([
+  'https://unpkg.com/wot-design-uni-assets/VID_115503.mp4',
+  'https://unpkg.com/wot-design-uni-assets/VID_150752.mp4',
+  'https://unpkg.com/wot-design-uni-assets/VID_155516.mp4'
 ])
 
 const current = ref<number>(0)

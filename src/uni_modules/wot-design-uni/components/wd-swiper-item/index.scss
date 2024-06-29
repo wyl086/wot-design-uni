@@ -1,0 +1,9 @@
+@import '../common/abstracts/variable';
+@import '../common/abstracts/mixin';
+
+@include b(swiper-item) {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  padding: $-swiper-item-padding;
+}

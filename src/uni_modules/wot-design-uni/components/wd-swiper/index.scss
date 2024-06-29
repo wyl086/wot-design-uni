@@ -3,20 +3,21 @@
 
 @include b(swiper) {
   position: relative;
-  @include e(track){
+
+  @include e(track) {
     border-radius: $-swiper-radius;
     overflow: hidden;
     transform: translateY(0);
   }
 
-  @include e(item){
+  @include e(item) {
     display: flex;
     align-items: center;
     box-sizing: border-box;
     padding: $-swiper-item-padding;
   }
 
-  @include e(image){
+  @include e(image, video) {
     width: 100%;
     transition: all 0.3s ease;
   }

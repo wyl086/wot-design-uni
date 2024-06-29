@@ -672,3 +672,25 @@ export function omitBy<O extends Record<string, any>>(obj: O, predicate: (value:
   Object.keys(newObj).forEach((key) => predicate(newObj[key], key) && delete newObj[key]) // 遍历对象的键，删除值为不满足predicate的字段
   return newObj
 }
+
+/**
+ * 检查提供的URL是否为视频链接。
+ * @param url 需要检查的URL字符串。
+ * @returns 返回一个布尔值，如果URL是视频链接则为true，否则为false。
+ */
+export function isVideoUrl(url: string): boolean {
+  // 使用正则表达式匹配视频文件类型的URL
+  const videoRegex = /\.(mp4|mpg|mpeg|dat|asf|avi|rm|rmvb|mov|wmv|flv|mkv|video)/i
+  return videoRegex.test(url)
+}
+
+/**
+ * 检查提供的URL是否为图片URL。
+ * @param url 待检查的URL字符串。
+ * @returns 返回一个布尔值，如果URL是图片格式，则为true；否则为false。
+ */
+export function isImageUrl(url: string): boolean {
+  // 使用正则表达式匹配图片URL
+  const imageRegex = /\.(jpeg|jpg|gif|png|svg|webp|jfif|bmp|dpg|image)/i
+  return imageRegex.test(url)
+}
