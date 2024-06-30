@@ -28,7 +28,7 @@
           />
           <video
             v-else
-            :id="`video-${index}`"
+            :id="`video-${index}-${uid}`"
             :style="{ height: addUnit(height) }"
             :src="isObj(item) ? item.value : item"
             :poster="isObj(item) ? item.poster : ''"
@@ -75,7 +75,7 @@ export default {
 
 <script lang="ts" setup>
 import { computed, watch, ref, getCurrentInstance } from 'vue'
-import { addUnit, isObj, isImageUrl, isVideoUrl } from '../common/util'
+import { addUnit, isObj, isImageUrl, isVideoUrl, uuid } from '../common/util'
 import { swiperProps, type SwiperList } from './types'
 import type { SwiperNavProps } from '../wd-swiper-nav/types'
 
@@ -86,6 +86,8 @@ const navCurrent = ref<number>(0) // 当前滑块
 const videoPlaying = ref<boolean>(false) // 当前是否在播放视频
 
 const { proxy } = getCurrentInstance() as any
+
+const uid = ref<string>(uuid())
 
 watch(
   () => props.current,
@@ -201,7 +203,7 @@ function handleStartVideoPaly(index: number) {
     if (currentItem) {
       const url = isObj(currentItem) ? currentItem.url : currentItem
       if (isVideoUrl(url)) {
-        const video = uni.createVideoContext(`video-${index}`, proxy)
+        const video = uni.createVideoContext(`video-${index}-${uid.value}`, proxy)
         video.play()
       }
     }
@@ -218,7 +220,7 @@ function handleStopVideoPaly(index: number) {
     if (previousItem) {
       const url = isObj(previousItem) ? previousItem.url : previousItem
       if (isVideoUrl(url)) {
-        const video = uni.createVideoContext(`video-${index}`, proxy)
+        const video = uni.createVideoContext(`video-${index}-${uid.value}`, proxy)
         video.pause()
       }
     }

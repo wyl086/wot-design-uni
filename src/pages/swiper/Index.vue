@@ -20,12 +20,37 @@
       ></wd-swiper>
     </demo-block>
 
-    <demo-block title="播放视频">
+    <demo-block title="视频轮播">
       <wd-swiper
         :list="videoList"
         autoplay
         :indicator="{ type: 'fraction' }"
-        indicator-position="bottom-right"
+        indicator-position="top-right"
+        @click="handleClick"
+        @change="onChange"
+      ></wd-swiper>
+    </demo-block>
+
+    <demo-block title="手动播放视频">
+      <wd-swiper
+        :list="videoList"
+        autoplay
+        :autoplayVideo="false"
+        :indicator="{ type: 'fraction' }"
+        indicator-position="top-right"
+        @click="handleClick"
+        @change="onChange"
+      ></wd-swiper>
+    </demo-block>
+
+    <demo-block title="播放视频时停止轮播">
+      <wd-swiper
+        :list="videoList"
+        autoplay
+        stopAutoplayWhenVideoPlay
+        :autoplayVideo="false"
+        :indicator="{ type: 'fraction' }"
+        indicator-position="top-right"
         @click="handleClick"
         @change="onChange"
       ></wd-swiper>
